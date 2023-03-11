@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<?import javafx.scene.layout.GridPane?>
+<StackPane prefHeight="252.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.testgen.ui.controller.UserCurdController" >
+    <GridPane>
+        <Label text="This is User's Screen!" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Button onAction="#addOverlay" text="+" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <!--<TableView id="userTable" fx:id="userTable" editable="true" prefHeight="241.0" prefWidth="560.0" tableMenuButtonVisible="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+             <columns>
+              <TableColumn prefWidth="75.0" text="Name" fx:factory="editStartEvent" />
+               <TableColumn prefWidth="128.0" text="Username" cellFactory="userName" />
+                 <TableColumn prefWidth="97.0" text="Password" cellFactory="password" />
+                 <TableColumn minWidth="0.0" prefWidth="87.0" text="Type" cellFactory="userType" />
+                 <TableColumn minWidth="0.0" prefWidth="87.0" text="Auth Checker" cellFactory="authCheckUser" />
+                 <TableColumn prefWidth="56.0" text="Action" />
+            </columns>
+       </TableView>-->
+    </GridPane>
+</StackPane>

@@ -1,0 +1,15 @@
+username: test
+passoword: test
+sources:
+   activeData: {curl url}
+   activeDataTld: {curl url}
+   dataSources: {}
+entities:
+  developerIds:
+    alais:
+      -
+    sourcePath: activeData.developerIds
+  collectionIds:
+    alais:
+      -
+      sourcePath: activeData.developerIds
