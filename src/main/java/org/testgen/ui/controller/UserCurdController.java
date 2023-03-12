@@ -1,31 +1,16 @@
 package org.testgen.ui.controller;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import org.bson.Document;
-import org.dizitart.no2.FindOptions;
 import org.dizitart.no2.Nitrite;
-import org.dizitart.no2.objects.Cursor;
 import org.dizitart.no2.objects.ObjectRepository;
+import org.jetbrains.annotations.NotNull;
 import org.testgen.db.DB;
 import org.testgen.db.model.User;
-import org.testgen.db.model.UserType;
 import org.testgen.ui.screens.UserScreen;
 
-import java.io.IOException;
-import java.util.List;
-
-public class UserCurdController {
+public class UserCurdController extends AbstractCurdController<User, UserScreen> {
 
     @FXML
     private TextField nameField;
@@ -45,38 +30,6 @@ public class UserCurdController {
     @FXML
     private Label errorLabel;
 
-    public void addOverlay(ActionEvent actionEvent) {
-        StackPane pane = UserScreen.getInstance().getPane();
-        try {
-            Node load = FXMLLoader.load(getClass().getResource("/ui.screens/AddEditUser.fxml"));
-            StackPane.setMargin(load, new Insets(50,50,50,50));
-            pane.getChildren().add(load);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void closeOverlay(ActionEvent actionEvent) {
-        StackPane pane = UserScreen.getInstance().getPane();
-        ObservableList<Node> children = pane.getChildren();
-        System.out.println("Children in Usercurd "+children);
-        children.removeIf(node -> "AddEditOverlay".equals(node.getId()));
-        reloadTable();
-    }
-
-    public static void reloadTable() {
-       List<User> users=getUsers();
-        ObservableList<User> items = UserScreen.getInstance().getTableView().getItems();
-        items.remove(0, items.size());
-        items.addAll(users);
-    }
-
-    private static List<User> getUsers() {
-        Nitrite database = DB.getInstance().getDatabase();
-        ObjectRepository<User> repository = database.getRepository(User.class);
-        Cursor<User> users = repository.find(FindOptions.limit(0, 5));
-        return users.toList();
-    }
 
     public void saveUser(ActionEvent actionEvent) {
         errorLabel.setText("");
@@ -119,5 +72,16 @@ public class UserCurdController {
             return false;
         }
        return true;
+    }
+
+    @NotNull
+    @Override
+    String getScreenPath() {
+        return "/ui.screens/AddEditUser.fxml";
+    }
+
+    @Override
+    protected UserScreen getScreen() {
+        return UserScreen.getInstance();
     }
 }

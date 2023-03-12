@@ -1,23 +1,17 @@
 package org.testgen.ui.screens;
 
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import jdk.jfr.EventFactory;
 import org.testgen.db.model.User;
 import org.testgen.db.model.UserType;
 import org.testgen.ui.controller.UserCurdController;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class UserScreen {
+public class UserScreen extends ConfigTableScreen<User> {
     private static volatile UserScreen instance = null;
     private final StackPane pane;
     private final TableView<User> tableView;
@@ -32,13 +26,9 @@ public class UserScreen {
         this.pane =FXMLLoader.load(getClass().getResource("/ui.screens/UserConfig.fxml"));
         GridPane userTablePane = (GridPane) pane.getChildren().get(0);
 //        <TableView id="userTable" fx:id="userTable" editable="true" prefHeight="241.0" prefWidth="560.0" tableMenuButtonVisible="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
-        tableView = new TableView<>();
+        tableView = createTable();
         tableView.setId("userTable");
-        tableView.setEditable(true);
-        tableView.setPrefHeight(260);
-        tableView.setPrefWidth(560);
-
-            TableColumn<User, String> column = createColumn("Name", "name");
+        TableColumn<User, String> column = createColumn("Name", "name");
             TableColumn<User, String> column1 = createColumn("User Name", "userName");
             TableColumn<User, String> column2= createColumn("Password", "password");
             TableColumn<User, UserType> column3 = createColumn("User Type", "userType", UserType.class);
@@ -47,17 +37,6 @@ public class UserScreen {
         userTablePane.add(tableView, 1,3,1,1);
     }
 
-    private TableColumn<User, String> createColumn(String name, String factoryName) {
-        return createColumn(name, factoryName, String.class);
-    }
-
-    private <T> TableColumn<User, T> createColumn(String name, String factoryName, Class<T> tClass) {
-        TableColumn<User, T> column1 =
-                new TableColumn<>(name);
-        column1.setCellValueFactory(
-                new PropertyValueFactory<>(factoryName));
-        return column1;
-    }
 
     public static UserScreen getInstance(){
         if (instance == null) {
@@ -65,7 +44,7 @@ public class UserScreen {
                 if (instance == null) {
                     try {
                         instance = new UserScreen();
-                        UserCurdController.reloadTable();
+                        UserCurdController.reloadTable(instance.tableView, User.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Not able to initialize User screen",e);
                     }
@@ -75,10 +54,12 @@ public class UserScreen {
         return instance;
     }
 
+    @Override
     public StackPane getPane() {
         return pane;
     }
 
+    @Override
     public TableView<User> getTableView() {
         return tableView;
     }
