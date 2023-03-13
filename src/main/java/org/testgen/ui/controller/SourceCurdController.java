@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.dizitart.no2.objects.ObjectRepository;
 import org.jetbrains.annotations.NotNull;
 import org.testgen.db.model.DataSource;
 import org.testgen.ui.screens.SourceScreen;
@@ -30,6 +31,7 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
     protected void initialize() {
         System.out.println("Initialize method called");
         System.out.println(requestBodyTxtArea);
+        SourceScreen.getInstance().setController(this);
         /*requestBodyTxtArea.textProperty().addListener ((observable, oldValue, newValue) -> {
             try {
                 // Try to parse the entered text as a JSON object
@@ -49,6 +51,11 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
     @Override
     protected SourceScreen getScreen() {
         return SourceScreen.getInstance();
+    }
+
+    @Override
+    protected boolean validateDelete(ObjectRepository<DataSource> repository, DataSource data) {
+        return false;
     }
 
     @NotNull

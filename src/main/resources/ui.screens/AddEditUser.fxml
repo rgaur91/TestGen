@@ -21,7 +21,7 @@
     <Text text="Password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     <PasswordField fx:id="passwordField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
     <Text text="Type" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-    <ChoiceBox fx:id="typeBox" GridPane.columnIndex="2" GridPane.rowIndex="4" >
+    <ChoiceBox fx:id="typeBox" value="NONSUPER" GridPane.columnIndex="2" GridPane.rowIndex="4" >
         <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="SUPER" />
@@ -30,7 +30,7 @@
         </items>
     </ChoiceBox>
     <Text text="Counter Auth" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-    <TextField fx:id="counterAuthField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+    <TextField fx:id="counterAuthField" GridPane.columnIndex="2" GridPane.rowIndex="5" promptText="Please enter Name of the user who has access to data which this user does not have."  />
     <Button onAction="#closeOverlay" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="6" />
     <Button onAction="#saveUser" text="Save" GridPane.columnIndex="2" GridPane.rowIndex="6" />
     <Label disable="true" fx:id="errorLabel" style="-fx-progress-color: crimson" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" />

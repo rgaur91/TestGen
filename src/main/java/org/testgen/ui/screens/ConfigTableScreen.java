@@ -1,11 +1,17 @@
 package org.testgen.ui.screens;
 
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 
 public abstract class ConfigTableScreen<T> {
+
+    protected Label errorLabel;
 
     public abstract StackPane getPane();
     public abstract TableView<T> getTableView();
@@ -29,4 +35,47 @@ public abstract class ConfigTableScreen<T> {
         tableView.setPrefWidth(560);
         return tableView;
     }
+
+    protected TableColumn<T, T> createDeleteColumn() {
+        TableColumn<T, T> deleteCol = new TableColumn<>("Action");
+        deleteCol.setCellValueFactory(
+                param -> new ReadOnlyObjectWrapper<>(param.getValue())
+        );
+        deleteCol.setCellFactory(param -> new TableCell<T, T>() {
+            private final Button deleteButton = new Button("X");
+
+            @Override
+            protected void updateItem(T data, boolean empty) {
+                super.updateItem(data, empty);
+
+                if (data == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(deleteButton);
+                deleteButton.setOnAction(
+                        getDelEventHandler(data)
+                );
+            }
+        });
+        return deleteCol;
+    }
+
+    protected void addErrorLabel() {
+//        <Label disable="true" style="-fx-text-fill: brown" wrapText="true"/>
+        errorLabel= new Label();
+        errorLabel.setTextFill(Paint.valueOf("brown"));
+        errorLabel.setOnMouseClicked(e->((Label)e.getSource()).setVisible(false));
+        StackPane.setMargin(errorLabel, new Insets(300,50,50,50));
+        getPane().getChildren().add(errorLabel);
+
+    }
+
+    protected abstract EventHandler<ActionEvent> getDelEventHandler(T data);
+
+    protected void showError(String error) {
+        errorLabel.setText(error+" X");
+        errorLabel.setVisible(true);
+    }
+
 }

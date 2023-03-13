@@ -1,5 +1,7 @@
 package org.testgen.ui.screens;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -14,6 +16,7 @@ public class SourceScreen extends ConfigTableScreen<DataSource> {
     private static volatile SourceScreen instance = null;
     private final StackPane pane;
     private final TableView<DataSource> tableView;
+    private SourceCurdController controller;
 
     private SourceScreen() throws IOException {
         if (instance != null) {
@@ -58,5 +61,23 @@ public class SourceScreen extends ConfigTableScreen<DataSource> {
 
     public TableView<DataSource> getTableView() {
         return tableView;
+    }
+
+    @Override
+    protected EventHandler<ActionEvent> getDelEventHandler(DataSource data) {
+        return event -> {
+            boolean delete = controller.delete(data);
+            if (delete) {
+                getTableView().getItems().remove(data);
+            }
+        };
+    }
+
+    public void setController(SourceCurdController controller) {
+        this.controller = controller;
+    }
+
+    public SourceCurdController getController() {
+        return controller;
     }
 }

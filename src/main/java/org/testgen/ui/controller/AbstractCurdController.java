@@ -9,11 +9,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import org.dizitart.no2.FindOptions;
 import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.WriteResult;
 import org.dizitart.no2.objects.Cursor;
 import org.dizitart.no2.objects.ObjectRepository;
 import org.testgen.db.DB;
 import org.testgen.ui.screens.ConfigTableScreen;
-import org.testgen.ui.screens.UserScreen;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -61,4 +61,23 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
         Cursor<X> users = repository.find(FindOptions.limit(0, 5));
         return users.toList();
     }
+
+    protected ObjectRepository<T> getUserObjectRepository() {
+        DB db = DB.getInstance();
+        Nitrite database = db.getDatabase();
+        Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+        return database.getRepository(clazz);
+    }
+
+    public boolean delete(T data) {
+        ObjectRepository<T> repository = getUserObjectRepository();
+        if(validateDelete(repository, data)) {
+            WriteResult result = repository.remove(data);
+            return result.getAffectedCount() > 0;
+        }
+        return false;
+    }
+
+    protected abstract boolean validateDelete(ObjectRepository<T> repository, T data);
 }
