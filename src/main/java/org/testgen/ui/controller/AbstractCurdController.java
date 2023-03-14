@@ -2,9 +2,11 @@ package org.testgen.ui.controller;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import org.dizitart.no2.FindOptions;
@@ -23,6 +25,9 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
 
     public static final String ADD_EDIT_OVERLAY = "AddEditOverlay";
     public static final String OVERLAY = "Overlay";
+
+    @FXML
+    protected Label errorLabel;
 
     public void addOverlay(ActionEvent actionEvent) {
         StackPane pane = getScreen().getPane();
@@ -77,6 +82,11 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
             return result.getAffectedCount() > 0;
         }
         return false;
+    }
+
+    protected void showError(String error) {
+        errorLabel.setText(error+" X");
+        errorLabel.setVisible(true);
     }
 
     protected abstract boolean validateDelete(ObjectRepository<T> repository, T data);

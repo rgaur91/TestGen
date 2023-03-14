@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public class SourceScreen extends ConfigTableScreen<DataSource> {
     private static volatile SourceScreen instance = null;
-    private final StackPane pane;
-    private final TableView<DataSource> tableView;
+    private StackPane pane;
+    private TableView<DataSource> tableView;
     private SourceCurdController controller;
 
     private SourceScreen() throws IOException {
@@ -25,17 +25,6 @@ public class SourceScreen extends ConfigTableScreen<DataSource> {
                             + SourceScreen.class.getName()
                             + " class already exists, Can't create a new instance.");
         }
-        this.pane = FXMLLoader.load(getClass().getResource("/ui.screens/SourceConfig.fxml"));
-        GridPane sourceTablePane = (GridPane) pane.getChildren().get(0);
-        tableView = createTable();
-        tableView.setId("sourceTable");
-
-        TableColumn<DataSource, String> column = createColumn("Source Name", "sourceName");
-        TableColumn<DataSource, String> column1 = createColumn("Endpoint", "endpoint");
-        TableColumn<DataSource, String> column2= createColumn("Method", "method");
-        TableColumn<DataSource, String> column3= createColumn("Request", "requestBody");
-        tableView.getColumns().addAll(column,column1, column2, column3);
-        sourceTablePane.add(tableView, 1,3,1,1);
     }
 
     public static SourceScreen getInstance() {
@@ -44,6 +33,17 @@ public class SourceScreen extends ConfigTableScreen<DataSource> {
                 if (instance == null) {
                     try {
                         instance = new SourceScreen();
+                        instance.pane = FXMLLoader.load(instance.getClass().getResource("/ui.screens/SourceConfig.fxml"));
+                        GridPane sourceTablePane = (GridPane) instance.pane.getChildren().get(0);
+                        instance.tableView = instance.createTable();
+                        instance.tableView.setId("sourceTable");
+
+                        TableColumn<DataSource, String> column = instance.createColumn("Source Name", "sourceName");
+                        TableColumn<DataSource, String> column1= instance.createColumn("Endpoint", "endpoint");
+                        TableColumn<DataSource, String> column2= instance.createColumn("Method", "method");
+                        TableColumn<DataSource, String> column3= instance.createColumn("Request", "requestBody");
+                        instance.tableView.getColumns().addAll(column,column1, column2, column3);
+                        sourceTablePane.add(instance.tableView, 1,3,1,1);
                         SourceCurdController.reloadTable(instance.tableView, DataSource.class);
                     } catch (IOException e) {
                         e.printStackTrace();
