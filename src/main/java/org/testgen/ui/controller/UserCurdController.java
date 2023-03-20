@@ -42,7 +42,7 @@ public class UserCurdController extends AbstractCurdController<User, UserScreen>
         errorLabel.setText("");
         User user = getUser();
         if (validate(user)) {
-            ObjectRepository<User> repository = getUserObjectRepository();
+            ObjectRepository<User> repository = getRepository();
             repository.insert(user);
            errorLabel.setText("User saved successfully.");
 
@@ -93,7 +93,7 @@ public class UserCurdController extends AbstractCurdController<User, UserScreen>
     }
 
     private User getUserByName(String name) {
-        ObjectRepository<User> repository = getUserObjectRepository();
+        ObjectRepository<User> repository = getRepository();
         Cursor<User> cursor = repository.find();
         return repository.find(ObjectFilters.eq("name",name)).firstOrDefault();
     }

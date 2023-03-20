@@ -12,6 +12,7 @@ public class DataSource implements Serializable {
     private String endpoint;
     private String method;
     private String requestBody;
+    private boolean authentication;
 
     public String getSourceName() {
         return sourceName;
@@ -59,5 +60,13 @@ public class DataSource implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(sourceName, endpoint, method, requestBody);
+    }
+
+    public void setAuthentication(boolean authentication) {
+        this.authentication = authentication;
+    }
+
+    public boolean getAuthentication() {
+        return authentication;
     }
 }

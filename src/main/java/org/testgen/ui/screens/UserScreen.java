@@ -1,11 +1,8 @@
 package org.testgen.ui.screens;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -13,7 +10,6 @@ import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
 import org.testgen.db.model.User;
 import org.testgen.db.model.UserType;
-import org.testgen.ui.controller.AbstractCurdController;
 import org.testgen.ui.controller.UserCurdController;
 
 import java.io.IOException;

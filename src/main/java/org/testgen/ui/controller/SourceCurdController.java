@@ -1,15 +1,9 @@
 package org.testgen.ui.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Paint;
 import org.dizitart.no2.objects.ObjectRepository;
 import org.jetbrains.annotations.NotNull;
@@ -17,13 +11,8 @@ import org.testgen.db.model.DataSource;
 import org.testgen.rest.RestClient;
 import org.testgen.ui.screens.SourceScreen;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 public class SourceCurdController extends AbstractCurdController<DataSource, SourceScreen>{
+
 
     @FXML
     private TextField sourceNameField;
@@ -34,6 +23,12 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
 
     @FXML
     private TextArea requestBodyTxtArea;
+
+    @FXML
+    private TextArea responseBodyTxtArea;
+
+    @FXML
+    private CheckBox authentication;
 
     @FXML
     protected void initialize() {
@@ -78,7 +73,9 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
         errorLabel.setVisible(false);
         DataSource ds = getDataSource();
         if(validate(ds)){
-
+            ObjectRepository<DataSource> repository = getRepository();
+            repository.insert(ds);
+            errorLabel.setText("Source saved.");
         }
 
     }
@@ -96,10 +93,14 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
             showError("Method is required.");
             return false;
         }
+        // TODO: 18/03/23 authentication
         JsonObject res = RestClient.sendRequest(ds.getEndpoint(), ds.getMethod(), ds.getRequestBody(), JsonObject.class);
         if (res==null){
             showError("Error in call the REST API");
             return false;
+        } else {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            responseBodyTxtArea.setText(gson.toJson(res));
         }
         return false;
     }
@@ -112,8 +113,14 @@ public class SourceCurdController extends AbstractCurdController<DataSource, Sou
         ds.setEndpoint(endpointField.getText());
         ds.setMethod(methodChoice.getValue());
         ds.setRequestBody(requestBodyTxtArea.getText());
+        ds.setAuthentication(authentication.isSelected());
         return ds;
     }
 
 
+    public void testApi(ActionEvent actionEvent) {
+        errorLabel.setVisible(false);
+        DataSource ds = getDataSource();
+        validate(ds);
+    }
 }

@@ -8,6 +8,7 @@
 
   <Menu text="Config">
       <MenuItem mnemonicParsing="false" text="Users" onAction="#handleUserConfig" />
+      <MenuItem mnemonicParsing="false" text="Authentication" onAction="#handleAuthConfig" />
       <MenuItem mnemonicParsing="false" text="Sources" onAction="#handleSourceConfig" />
       <MenuItem mnemonicParsing="false" text="Fields" onAction="#handleFieldsConfig" />
   </Menu>

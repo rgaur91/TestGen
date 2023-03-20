@@ -67,7 +67,7 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
         return users.toList();
     }
 
-    protected ObjectRepository<T> getUserObjectRepository() {
+    protected ObjectRepository<T> getRepository() {
         DB db = DB.getInstance();
         Nitrite database = db.getDatabase();
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
@@ -76,7 +76,7 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
     }
 
     public boolean delete(T data) {
-        ObjectRepository<T> repository = getUserObjectRepository();
+        ObjectRepository<T> repository = getRepository();
         if(validateDelete(repository, data)) {
             WriteResult result = repository.remove(data);
             return result.getAffectedCount() > 0;

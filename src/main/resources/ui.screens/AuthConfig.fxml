@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<GridPane style="-fx-background-color: whitesmoke;-fx-opacity: 100;" id="AddEditOverlay" hgap="2.0" vgap="2.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.testgen.ui.controller.AuthCurdController">
+    <Text text="Host" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <TextField fx:id="hostField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <Text text="Endpoint" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <TextField fx:id="endpointField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+    <Text text="Request Body" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    <TextArea fx:id="requestBodyTxtArea" GridPane.columnIndex="2" GridPane.rowIndex="3" promptText="Enter Request body as JSON/text" wrapText="true" />
+    <Button onAction="#test" text="Test" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    <TextArea fx:id="responseBodyTxtArea" GridPane.columnIndex="1" GridPane.rowIndex="5" wrapText="true" />
+    <Button onAction="#close" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+    <Button onAction="#saveAuth" text="Save" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+    <Label fx:id="errorLabel" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8" />
+   <opaqueInsets>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>

@@ -7,25 +7,34 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import org.testgen.ui.TestGenApp;
+import org.testgen.ui.controller.MenuController;
 
 import java.io.IOException;
 
 public class HomeScreen {
 
     private static HomeScreen instance;
-    private static final String lock= "HomeScreen";
-    private final BorderPane mainFrame;
-    private final GridPane defaultScreen;
-    private final Scene scene;
+    private static final String lock = "HomeScreen";
+    private BorderPane mainFrame;
+    private GridPane defaultScreen;
+    private Scene scene;
+    private MenuController controller;
+
+    private HomeScreen() {
+        if (instance != null) {
+            throw new AssertionError(
+                    "Another instance of "
+                            + HomeScreen.class.getName()
+                            + " class already exists, Can't create a new instance.");
+        }
+    }
 
     public static HomeScreen getInstance() {
-        if (instance==null) {
+        if (instance == null) {
             synchronized (lock) {
                 try {
                     instance = new HomeScreen();
+                    instance.init();
                 } catch (IOException e) {
                     throw new RuntimeException("Not able to initialize HomeScreen.");
                 }
@@ -33,23 +42,14 @@ public class HomeScreen {
         }
         return instance;
     }
-    private HomeScreen() throws IOException {
+
+    private void init() throws IOException {
         mainFrame = new BorderPane();
-        this.scene = new Scene(mainFrame, 400, 400);
-        this.defaultScreen =FXMLLoader.load(getClass().getResource("/ui.screens/HomeScreen.fxml"));
-        init();
-    }
-
-    private void init() {
-        try {
-
-            // Load the Mainframe screen from the FXML file
-            addMenu(mainFrame);
-            mainFrame.setCenter(defaultScreen);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.scene = new Scene(mainFrame, 900, 600);
+        this.defaultScreen = FXMLLoader.load(getClass().getResource("/ui.screens/HomeScreen.fxml"));
+        // Load the Mainframe screen from the FXML file
+        addMenu(mainFrame);
+        mainFrame.setCenter(defaultScreen);
     }
 
     public Scene getScene() {
@@ -67,13 +67,22 @@ public class HomeScreen {
 //        ImageView imageView = new ImageView(image);
 //        menuBar.getMenus().get(0).setGraphic(imageView);
         Button homeButton = new Button("Home");
-        homeButton.setOnAction(e->showHomeScreen());
-        HBox hBox = new HBox(menuBar,homeButton);
+        homeButton.setOnAction(e -> showHomeScreen());
+        HBox hBox = new HBox(menuBar, homeButton);
         mainFrm.setTop(hBox);
 
     }
+
     public void showHomeScreen() {
-            // Set home screen as the center of the root layout.
-            mainFrame.setCenter(defaultScreen);
+        // Set home screen as the center of the root layout.
+        mainFrame.setCenter(defaultScreen);
+    }
+
+    public void setController(MenuController controller) {
+        this.controller = controller;
+    }
+
+    public MenuController getController() {
+        return controller;
     }
 }

@@ -3,6 +3,6 @@
 <?import javafx.scene.control.Label?>
 
 <?import javafx.scene.layout.GridPane?>
-<GridPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.testgen.ui.controller.MenuController">
+<GridPane  prefHeight="552.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.testgen.ui.controller.MenuController">
     <Label text="This is Home Screen!" />
 </GridPane>

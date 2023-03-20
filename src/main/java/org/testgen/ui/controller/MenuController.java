@@ -1,11 +1,9 @@
 package org.testgen.ui.controller;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
-import org.testgen.ui.screens.FieldsScreen;
-import org.testgen.ui.screens.HomeScreen;
-import org.testgen.ui.screens.SourceScreen;
-import org.testgen.ui.screens.UserScreen;
+import org.testgen.ui.screens.*;
 
 public class MenuController {
 
@@ -25,6 +23,16 @@ public class MenuController {
         updateScreen(MenuScreens.FIELD);
     }
 
+    @FXML
+    private void handleAuthConfig() {
+        updateScreen(MenuScreens.AUTH);
+    }
+
+    @FXML
+    private void initialize() {
+        HomeScreen.getInstance().setController(this);
+    }
+
     private void updateScreen(MenuScreens screen) {
         String javaLibPath = System.getProperty("java.library.path");
         System.out.println(javaLibPath);
@@ -39,6 +47,9 @@ public class MenuController {
             case FIELD:
                 borderPane.setCenter(FieldsScreen.getInstance().getPane());
                 break;
+            case AUTH:
+                borderPane.setCenter(AuthScreen.getInstance().getPane());
+                break;
             default:
                 HomeScreen.getInstance().showHomeScreen();
                 break;
@@ -47,7 +58,6 @@ public class MenuController {
 
 
     private enum MenuScreens {
-        USER,SOURCE,FIELD
-
+        USER,SOURCE,FIELD,AUTH
     }
 }
