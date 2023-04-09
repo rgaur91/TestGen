@@ -10,16 +10,20 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Map;
 
 public class RestClient {
 
-public static <R> R sendRequest(String endpoint, String method, String request, Class<R> responseClass) {
+public static <R> R sendRequest(String endpoint, String method, String request, Map<String, String> headers, Class<R> responseClass) {
 
     try {
 
         URL url = new URL(endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
+        if(headers != null && !headers.isEmpty()){
+            headers.forEach(connection::setRequestProperty);
+        }
         if (request != null && !request.isBlank()) {
             connection.setRequestProperty("Content-Type", "application/json");
 

@@ -14,8 +14,10 @@ import org.testgen.db.DB;
 import org.testgen.db.model.AuthConfig;
 import org.testgen.db.model.User;
 import org.testgen.rest.RestClient;
+import org.testgen.rest.dto.AuthRes;
 import org.testgen.ui.screens.AuthScreen;
 import org.testgen.ui.screens.HomeScreen;
+import org.testgen.util.AuthUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,15 +45,7 @@ public class AuthCurdController {
     public AuthConfig test() {
         AuthConfig authConfig = getAuthConfig();
         if (validate(authConfig)) {
-            ObjectRepository<User> usersRepo = DB.getInstance().getDatabase().getRepository(User.class);
-            Cursor<User> users = usersRepo.find();
-            User user = users.firstOrDefault();
-            Map<String, String> val= new HashMap<>();
-            val.put("user.userName",user.getUserName());
-            val.put("user.password",user.getPassword());
-            String req = StringSubstitutor.replace(authConfig.getRequestBody(),val);
-            String url = authConfig.getHost() +authConfig.getEndPoint();
-            JsonObject res = RestClient.sendRequest(url, "POST", req, JsonObject.class);
+            AuthRes res= AuthUtil.getInstance().authenticate(authConfig);
             if (res==null){
                 showError("Error in call the REST API");
             } else {

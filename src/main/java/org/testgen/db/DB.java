@@ -2,10 +2,12 @@ package org.testgen.db;
 
 import org.dizitart.no2.Nitrite;
 
+import java.io.File;
+
 public class DB {
     private static volatile DB instance = null;
 
-    private final Nitrite database;
+    private  Nitrite database;
 
     private DB() {
         if (instance != null) {
@@ -14,10 +16,24 @@ public class DB {
                             + DB.class.getName()
                             + " class already exists, Can't create a new instance.");
         }
-        database = Nitrite.builder()
-                .compressed()
-                .filePath("/tmp/test.db")
-                .openOrCreate("test", "test");
+
+        String dbDir = System.getProperty("user.home")+"/Library/testgen/";
+        File file = new File(dbDir);
+        if (!file.exists()) {
+            if (!file.mkdir()) {
+                throw new RuntimeException("Cannot create DB Dir "+dbDir+". Please create manually.");
+            }
+        }
+        System.out.println("Will create new DB");
+        try {
+            database = Nitrite.builder()
+                    .compressed()
+                    .filePath(dbDir + "test.db")
+                    .openOrCreate("test", "test");
+            System.out.println("DB created "+database);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static DB getInstance() {

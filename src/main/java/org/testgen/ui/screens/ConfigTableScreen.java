@@ -61,6 +61,7 @@ public abstract class ConfigTableScreen<T> {
         return deleteCol;
     }
 
+
     protected void addErrorLabel() {
 //        <Label disable="true" style="-fx-text-fill: brown" wrapText="true"/>
         errorLabel= new Label();

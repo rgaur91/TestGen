@@ -9,6 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.dizitart.no2.FindOptions;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.WriteResult;
@@ -86,6 +88,13 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
 
     protected void showError(String error) {
         errorLabel.setText(error+" X");
+        errorLabel.setTextFill(Color.RED);
+        errorLabel.setVisible(true);
+    }
+
+    protected void showSuccess(String msg) {
+        errorLabel.setText(msg);
+        errorLabel.setTextFill(Color.GREEN);
         errorLabel.setVisible(true);
     }
 
