@@ -1,6 +1,7 @@
 package org.testgen.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RestClient {
@@ -39,7 +41,8 @@ public static <R> R sendRequest(String endpoint, String method, String request, 
 
 
         // Read the response from the connection
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getResponseCode()!=200?connection.getErrorStream():connection.getInputStream()));
         StringBuilder responseBuilder = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -50,9 +53,19 @@ public static <R> R sendRequest(String endpoint, String method, String request, 
         // Print the response
         String response = responseBuilder.toString();
         Gson gson= new Gson();
-
         System.out.println(response);
-        return gson.fromJson(response, responseClass);
+        if (connection.getResponseCode()==200) {
+            return gson.fromJson(response, responseClass);
+        } else if (responseClass.equals(JsonObject.class)){
+            System.out.println("Json ResObj");
+            JsonObject errorRes= new JsonObject();
+            errorRes.addProperty("Status", connection.getResponseCode());
+            errorRes.addProperty("Response", response);
+            return (R) errorRes;
+        } else {
+            return null;
+        }
+
     } catch (ProtocolException e) {
         e.printStackTrace();
     } catch (MalformedURLException e) {

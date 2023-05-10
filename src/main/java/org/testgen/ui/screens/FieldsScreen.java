@@ -1,36 +1,30 @@
 package org.testgen.ui.screens;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
+import org.dizitart.no2.FindOptions;
+import org.dizitart.no2.SortOrder;
 import org.jetbrains.annotations.NotNull;
-import org.testgen.db.model.DataSource;
-import org.testgen.db.model.Field;
-import org.testgen.db.model.FieldType;
-import org.testgen.ui.AutoCompleteCell;
+import org.testgen.db.model.SourcedField;
 import org.testgen.ui.controller.FieldCurdController;
-import org.testgen.ui.controller.SourceCurdController;
 
 import java.io.IOException;
 
-public class FieldsScreen extends ConfigTableScreen<Field> {
+public class FieldsScreen extends ConfigTableScreen<SourcedField> {
     private static volatile FieldsScreen instance = null;
     private StackPane pane;
-    private TableView<Field> tableView;
+    private TableView<SourcedField> tableView;
     private final FieldCurdController fieldCurdController;
     private ContextMenu sourceContext;
+    private Pagination pagination;
 
     private FieldsScreen() throws IOException {
         if (instance != null) {
@@ -53,7 +47,7 @@ public class FieldsScreen extends ConfigTableScreen<Field> {
                         instance.tableView = instance.createTable();
                         instance.tableView.setId("sourceTable");
                         instance.tableView.setEditable(true);
-                        TableColumn<Field, String> column = instance.createColumn("Name", "name");
+                        TableColumn<SourcedField, String> column = instance.createColumn("Name", "name");
                         column.setCellFactory(TextFieldTableCell.forTableColumn());
                         column.setOnEditCommit(e->{
                             if (!StringUtils.isBlank(e.getOldValue())) {
@@ -62,41 +56,14 @@ public class FieldsScreen extends ConfigTableScreen<Field> {
                                 e.getTableView().getItems().get(e.getTablePosition().getRow()).setName(e.getNewValue());
                             }
                         });
-                        TableColumn<Field, String> column1= instance.createColumn("Source", "source");
-                        column1.setCellFactory(param -> new AutoCompleteCell<>());
-                        column1.setOnEditCommit(e-> {
-                            Field field = e.getTableView().getItems().get(e.getTablePosition().getRow());
-                            field.setSource(e.getNewValue());
-                            instance.fieldCurdController.save(field);
-                        });
-                        instance.sourceContext = new ContextMenu();
-                        column1.setContextMenu(instance.sourceContext);
-                        column1.textProperty().addListener(getSourceChangeListener());
-                        TableColumn<Field, String> column2= instance.createColumn("Type", "type");
-//                        column2.setCellFactory(TextFieldTableCell.forTableColumn());
-                        column2.setOnEditCommit(e-> {
-                            Field field = e.getTableView().getItems().get(e.getTablePosition().getRow());
-                           try {
-                               FieldType type = FieldType.valueOf(e.getNewValue());
-                               field.setType(type);
-                               instance.fieldCurdController.save(field);
-                           } catch (IllegalArgumentException ex){
-                               instance.showError("Invalid Field Type. Allowed Values: "+FieldType.allowedValues());
-                           }
-                        });
-                        TableColumn<Field, Field> column3= instance.createDeleteColumn();
+                        TableColumn<SourcedField, String> column1= instance.createColumn("Source", "source");
+                        TableColumn<SourcedField, String> column2= instance.createColumn("Path", "path");
+                        TableColumn<SourcedField, String> column3= instance.createColumn("Type", "type");
                         instance.tableView.getColumns().addAll(column,column1, column2, column3);
-                        Button add = new Button("Add");
-                        add.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                instance.tableView.getItems().add(new Field());
-
-                            }
-                        });
-                        sourceTablePane.add(add, 1,2, 1,1);
-                        sourceTablePane.add(instance.tableView, 1,3,5,20);
-                        FieldCurdController.reloadTable(instance.tableView, Field.class);
+                        instance.pagination = new Pagination();
+                        sourceTablePane.add(instance.tableView, 1,3,5,1);
+                        sourceTablePane.add(instance.pagination, 1,4,5,1);
+                        FieldCurdController.reloadTable(instance.tableView, SourcedField.class, instance.pagination, instance.getSortOn());
                         instance.addErrorLabel();
                     } catch (IOException e) {
                         throw new RuntimeException("Not able to initialize FieldsScreen screen");
@@ -144,12 +111,22 @@ public class FieldsScreen extends ConfigTableScreen<Field> {
     }
 
     @Override
-    public TableView<Field> getTableView() {
+    public TableView<SourcedField> getTableView() {
+        return tableView;
+    }
+
+    @Override
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    @Override
+    protected EventHandler<ActionEvent> getDelEventHandler(SourcedField data) {
         return null;
     }
 
     @Override
-    protected EventHandler<ActionEvent> getDelEventHandler(Field data) {
-        return null;
+    public FindOptions getSortOn() {
+        return FindOptions.sort("name", SortOrder.Ascending);
     }
 }

@@ -1,6 +1,7 @@
 package org.testgen.ui.screens;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -8,13 +9,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import org.dizitart.no2.FindOptions;
 
 public abstract class ConfigTableScreen<T> {
 
+    public static final int PAGE_SIZE = 10;
     protected Label errorLabel;
 
     public abstract StackPane getPane();
     public abstract TableView<T> getTableView();
+    public abstract Pagination getPagination();
 
     protected TableColumn<T, String> createColumn(String name, String factoryName) {
         return createColumn(name, factoryName, String.class);
@@ -79,4 +83,5 @@ public abstract class ConfigTableScreen<T> {
         errorLabel.setVisible(true);
     }
 
+    public abstract FindOptions getSortOn();
 }

@@ -3,10 +3,13 @@ package org.testgen.ui.screens;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import org.dizitart.no2.FindOptions;
+import org.dizitart.no2.SortOrder;
 import org.jetbrains.annotations.NotNull;
 import org.testgen.db.model.User;
 import org.testgen.db.model.UserType;
@@ -19,6 +22,7 @@ public class UserScreen extends ConfigTableScreen<User> {
     private StackPane pane;
     private TableView<User> tableView;
     private UserCurdController controller;
+    private Pagination pagination;
 
     private UserScreen() throws IOException {
         if (instance != null) {
@@ -47,6 +51,11 @@ public class UserScreen extends ConfigTableScreen<User> {
         };
     }
 
+    @Override
+    public FindOptions getSortOn() {
+        return FindOptions.sort("name", SortOrder.Ascending);
+    }
+
     public void setController(UserCurdController userCurdController) {
         this.controller= userCurdController;
     }
@@ -70,8 +79,10 @@ public class UserScreen extends ConfigTableScreen<User> {
                         TableColumn<User, String> column4= instance.createColumn("Auth Cross Checker", "authCheckUser");
                         TableColumn<User, User> deleteColumn = instance.createDeleteColumn();
                         instance.tableView.getColumns().addAll(column,column1, column2, column3, column4, deleteColumn);
+                        instance.pagination = new Pagination();
                         userTablePane.add(instance.tableView, 1,3,1,1);
-                        UserCurdController.reloadTable(instance.tableView, User.class);
+                        userTablePane.add(instance.pagination, 1,4,5,1);
+                        UserCurdController.reloadTable(instance.tableView, User.class, instance.pagination, instance.getSortOn());
                         instance.addErrorLabel();
                     } catch (IOException e) {
                         throw new RuntimeException("Not able to initialize User screen",e);
@@ -90,5 +101,10 @@ public class UserScreen extends ConfigTableScreen<User> {
     @Override
     public TableView<User> getTableView() {
         return tableView;
+    }
+
+    @Override
+    public Pagination getPagination() {
+        return pagination;
     }
 }

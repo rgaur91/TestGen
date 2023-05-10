@@ -7,10 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.dizitart.no2.FindOptions;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.WriteResult;
@@ -22,6 +22,8 @@ import org.testgen.ui.screens.ConfigTableScreen;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+
+import static org.testgen.ui.screens.ConfigTableScreen.PAGE_SIZE;
 
 public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
 
@@ -50,30 +52,49 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
         children.stream().filter(c->OVERLAY.equals(c.getId())).forEach(n->n.setVisible(false));
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
-        reloadTable(getScreen().getTableView(), clazz);
+        reloadTable(getScreen().getTableView(), clazz, getScreen().getPagination(), getScreen().getSortOn());
     }
 
     protected abstract S getScreen();
 
-    public static <X> void reloadTable(TableView<X> tableView, Class<X> tClass) {
-        List<X> data=getData(tClass);
-        ObservableList<X> items = tableView.getItems();
-        items.remove(0, items.size());
-        items.addAll(data);
+    public static <X> void reloadTable(TableView<X> tableView, Class<X> tClass, Pagination pagination, FindOptions sortOn) {
+        long dataSize=getDataSize(tClass);
+        System.out.println("Data Size:"+dataSize);
+        // Set first page on load
+        ObservableList<X> firstItems = tableView.getItems();
+        firstItems.clear();
+        firstItems.addAll(getData(tClass,0, sortOn));
+        pagination.setPageCount((int) (dataSize/PAGE_SIZE+1));
+        pagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
+            ObservableList<X> items = tableView.getItems();
+            items.clear();
+            items.addAll(getData(tClass,newIndex.intValue() * PAGE_SIZE, sortOn));
+        });
     }
 
-    private static <X> List<X> getData(Class<X> tClass) {
+
+    private static <X> long getDataSize(Class<X> tClass) {
         Nitrite database = DB.getInstance().getDatabase();
         ObjectRepository<X> repository = database.getRepository(tClass);
-        Cursor<X> users = repository.find(FindOptions.limit(0, 5));
+        return repository.size();
+    }
+
+    private static <X> List<X> getData(Class<X> tClass, int offset, FindOptions sortOn) {
+        Nitrite database = DB.getInstance().getDatabase();
+        ObjectRepository<X> repository = database.getRepository(tClass);
+        Cursor<X> users = repository.find(sortOn.thenLimit(offset, ConfigTableScreen.PAGE_SIZE));
         return users.toList();
     }
 
     protected ObjectRepository<T> getRepository() {
-        DB db = DB.getInstance();
-        Nitrite database = db.getDatabase();
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
+        return getRepository(clazz);
+    }
+
+    protected <D> ObjectRepository<D> getRepository(Class<D> clazz) {
+        DB db = DB.getInstance();
+        Nitrite database = db.getDatabase();
         return database.getRepository(clazz);
     }
 
@@ -81,6 +102,7 @@ public abstract class AbstractCurdController<T,S extends ConfigTableScreen<T>> {
         ObjectRepository<T> repository = getRepository();
         if(validateDelete(repository, data)) {
             WriteResult result = repository.remove(data);
+            System.out.println("Deleted rows:"+ result.getAffectedCount());
             return result.getAffectedCount() > 0;
         }
         return false;
